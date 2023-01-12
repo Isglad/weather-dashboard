@@ -145,3 +145,10 @@ function readLocalStorage() {
   }
 }
 
+// a function that clears displayed weather data
+function clearWeatherPage(){
+  // delete weather divs
+  $("#currentWeather").empty();
+  $(".col").empty();
+}
+
