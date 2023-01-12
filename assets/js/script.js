@@ -1,22 +1,6 @@
 var apikey = "97c107da31d0208e3fb1be06dba822f2";
-// var lat;
-// var lon;
 var searchedCities = [];
 
-// function that displays weather to the page
-// function searchWeather(cityName) {
-//   // var addedCity = $("<button>");
-//   // addedCity.text(cityName);
-//   // // addedCity.on("click", function(){
-//   // //   addToLocalStorage();
-//   // //   getLatLon(cityName);
-//   // // })
-//   // $("#searchHistory").append(addedCity);
-//   // readLocalStorage();
-//   renderWeatherData();
-//   addToLocalStorage();
-//   getLatLon(cityName);
-// }
 
 // Calculate lat & lon of the given city and used api link with '/weather?'
 function getLatLon(cityName) {
@@ -127,14 +111,10 @@ function displayFutureWeather(lat, lon) {
 
 // when the search button is clicked, I want to get the weather condition
 $("#search-button").on("click", function () {
- 
-  console.log($("#city-input").val())
   var cityInputVal = $("#city-input").val();
   // var cityName = $("#city-input").val();
 
-  console.log(cityInputVal)
   searchedCities.push(cityInputVal);
-  console.log(searchedCities)
   clearWeatherPage();
   // searchWeather(cityInputVal);
   renderWeatherData();
@@ -151,47 +131,38 @@ function addToLocalStorage() {
 
 // a function that reads local storage
 function readLocalStorage() {
-  console.log(searchedCities)
   // parsing JSON data to object
-   // if no data in object searchedCities, let it be an empty object
+  // if no data in object searchedCities, let it be an empty object
   searchedCities = JSON.parse(localStorage.getItem("citiesStringify")) || [];
   console.log(searchedCities);
 }
 
 // a function that check if there data in localStorage and render it to the page when page reload
 function renderWeatherData() {
-  console.log(searchedCities)
   var searchHistoryEl = $("#searchHistory");
   searchHistoryEl.empty();
 
   if (searchedCities) {
     for (var i = 0; i < searchedCities.length; i++) {
       var newButton = $("<button>");
+      newButton.attr("data-cityname", searchedCities[i]);
       newButton.text(searchedCities[i]);
-      // newButton.on("click", function () {
-      //   console.log(searchedCities[i])
-      //   // getLatLon(searchedCities[i]);
-      // });
       searchHistoryEl.append(newButton);
+      // Add an event listener to cities being displayed in search history
+      newButton.on("click", function (event) {
+        event.target.getAttribute("data-cityname");
+        console.log(event.target.getAttribute("data-cityname"));
+        getLatLon(event.target.getAttribute("data-cityname"));
+      });
     }
   }
 }
 
-$("button").on("click", function(event){
-  var temp = event.target.text()
-  console.log(temp)
-  console.log(typeof temp)
-  console.log(event.target.text()); 
-  getLatLon(event.target.text());
-})
-
 // a function that clears displayed weather data
 function clearWeatherPage() {
   // delete weather divs
-  // $("#searchHistory").empty();
   $("#currentWeather").empty();
   $(".col").empty();
 }
-console.log("button")
 readLocalStorage();
 renderWeatherData();
