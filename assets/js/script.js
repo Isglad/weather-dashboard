@@ -127,3 +127,9 @@ function displayFutureWeather(lat, lon) {
       }
     });
 }
+
+// add a function that add data to local storage
+function addToLocalStorage(){
+  // store added city in local storage
+  localStorage.setItem("citiesStringify", JSON.stringify(searchedCities));
+}
