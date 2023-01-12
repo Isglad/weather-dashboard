@@ -1,16 +1,10 @@
-var cityInputVal = $("#city-input").val();
+
 var apikey = "97c107da31d0208e3fb1be06dba822f2";
 var lat;
 var lon;
-var searchedCities = {};
+var searchedCities = [];
 
-// when the search button is clicked, I want to get the weather condition
-$("#search-button").on("click", function () {
-  clearWeatherPage()
-  searchWeather();
-  readLocalStorage()
-  renderWeatherData()
-});
+
 
 // function that displays weather to the page
 function searchWeather() {
@@ -32,7 +26,7 @@ function getLatLon(cityName) {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
+      // console.log(data);
       // stored lat and lon data in variables
       lat = data.coord.lat;
       lon = data.coord.lon;
@@ -52,7 +46,7 @@ function displayCurrentWeather(data) {
   var temperature = data.main.temp;
   var humidity = data.main.humidity;
   var windSpeed = data.wind.speed;
-  console.log(windSpeed);
+  // console.log(windSpeed);
 
   var cityTitle = $("<h3>");
   // Date
@@ -87,13 +81,13 @@ function displayCurrentWeather(data) {
 // Used lat & lon obtained from the input city name
 function displayFutureWeather(lat, lon) {
   var requestUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apikey}&units=imperial`;
-  console.log(lat, lon);
+  // console.log(lat, lon);
   fetch(requestUrl)
     .then(function (response) {
       return response.json();
     })
     .then(function (data) {
-      console.log(data);
+      // console.log(data);
 
       for (var i = 0; i < 5; i++) {
         var date = i * 8 + 5;
@@ -130,28 +124,43 @@ function displayFutureWeather(lat, lon) {
     });
 }
 
+// when the search button is clicked, I want to get the weather condition
+$("#search-button").on("click", function () {
+  var cityInputVal = $("#city-input").val();
+  searchedCities.push(cityInputVal);
+
+  clearWeatherPage()
+  searchWeather();
+
+});
+
 // add a function that add data to local storage
 function addToLocalStorage(){
-  // store added city in local storage
   localStorage.setItem("citiesStringify", JSON.stringify(searchedCities));
+  console.log(searchedCities)
 }
 
 // a function that reads local storage
 function readLocalStorage() {
-  console.log(searchedCities);
   // parsing JSON data to object
   searchedCities = JSON.parse(localStorage.getItem("citiesStringify"));
+  console.log(searchedCities)
   // if no data in object searchedCities, let it be an empty object
   if (!searchedCities) {
-    searchedCities = {};
+    searchedCities = [];
   }
 }
 
 // a function that check if there data in localStorage and render it to the page when page reload
 function renderWeatherData() {
+  var searchHistoryEl = $("#searchHistory")
+  searchHistoryEl.empty()
+
   if (searchedCities){
-    for (var [key, value] of Object.entries(searchedCities)) {
-      $(`#${key} textarea`).val(value);
+    for (var i=0; i<searchedCities.length;i++) {
+      var newButton = $("<button>")
+      newButton.text(searchedCities[i])
+      searchHistoryEl.append(newButton);
     }
   }
 }
@@ -159,7 +168,10 @@ function renderWeatherData() {
 // a function that clears displayed weather data
 function clearWeatherPage(){
   // delete weather divs
+  // $("#searchHistory").empty();
   $("#currentWeather").empty();
   $(".col").empty();
 }
 
+readLocalStorage();
+renderWeatherData();
