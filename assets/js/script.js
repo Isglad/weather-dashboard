@@ -81,3 +81,49 @@ function displayCurrentWeather(data) {
   weatherTitle.text("5-Day Forecast");
   $("#currentWeather").append(weatherTitle);
 }
+
+// Used lat & lon obtained from the input city name
+function displayFutureWeather(lat, lon) {
+  var requestUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apikey}&units=imperial`;
+  console.log(lat, lon);
+  fetch(requestUrl)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      console.log(data);
+
+      for (var i = 0; i < 5; i++) {
+        var date = i * 8 + 5;
+        var cityDate = new Date(data.list[date].dt * 1000).toDateString();
+        var temperature = data.list[0].main.temp;
+        var humidity = data.list[0].main.humidity;
+        var windSpeed = data.list[0].wind.speed;
+
+        // create html elements
+        var icon = $("<img>").attr(
+          "src",
+          "https://openweathermap.org/img/w/" +
+            data.list[i].weather[0].icon +
+            ".png"
+        );
+        var date = $("<p>");
+        var temp = $("<p>");
+        var wind = $("<p>");
+        var humidityLevel = $("<p>");
+
+        // add attributes to created elements
+        date.attr("class", "city-date").text(cityDate);
+        temp.attr("class", "temperature").text("Temp: " + temperature);
+        wind.attr("class", "windSpeed").text("Wind: " + windSpeed);
+        humidityLevel.attr("class", "humidity").text("Humidity: " + humidity);
+
+        // append children elements to parents elements
+        $(`#day-${i + 1}`).append(date);
+        $(`#day-${i + 1}`).append(icon);
+        $(`#day-${i + 1}`).append(temp);
+        $(`#day-${i + 1}`).append(wind);
+        $(`#day-${i + 1}`).append(humidityLevel);
+      }
+    });
+}
