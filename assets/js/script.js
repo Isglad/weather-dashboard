@@ -133,3 +133,15 @@ function addToLocalStorage(){
   // store added city in local storage
   localStorage.setItem("citiesStringify", JSON.stringify(searchedCities));
 }
+
+// a function that reads local storage
+function readLocalStorage() {
+  console.log(searchedCities);
+  // parsing JSON data to object
+  searchedCities = JSON.parse(localStorage.getItem("citiesStringify"));
+  // if no data in object searchedCities, let it be an empty object
+  if (!searchedCities) {
+    searchedCities = {};
+  }
+}
+
