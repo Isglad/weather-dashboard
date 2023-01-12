@@ -8,6 +8,8 @@ var searchedCities = {};
 $("#search-button").on("click", function () {
   clearWeatherPage()
   searchWeather();
+  readLocalStorage()
+  renderWeatherData()
 });
 
 // function that displays weather to the page
@@ -142,6 +144,15 @@ function readLocalStorage() {
   // if no data in object searchedCities, let it be an empty object
   if (!searchedCities) {
     searchedCities = {};
+  }
+}
+
+// a function that check if there data in localStorage and render it to the page when page reload
+function renderWeatherData() {
+  if (searchedCities){
+    for (var [key, value] of Object.entries(searchedCities)) {
+      $(`#${key} textarea`).val(value);
+    }
   }
 }
 
