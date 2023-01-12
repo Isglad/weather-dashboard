@@ -1,21 +1,22 @@
-
 var apikey = "97c107da31d0208e3fb1be06dba822f2";
-var lat;
-var lon;
+// var lat;
+// var lon;
 var searchedCities = [];
 
-
-
 // function that displays weather to the page
-function searchWeather() {
-  var cityName = $("#city-input").val();
-  var addedCity = $("<button>");
-  addedCity.text(cityName);
-  $("#searchHistory").append(addedCity);
-
-  addToLocalStorage();
-  getLatLon(cityName);
-}
+// function searchWeather(cityName) {
+//   // var addedCity = $("<button>");
+//   // addedCity.text(cityName);
+//   // // addedCity.on("click", function(){
+//   // //   addToLocalStorage();
+//   // //   getLatLon(cityName);
+//   // // })
+//   // $("#searchHistory").append(addedCity);
+//   // readLocalStorage();
+//   renderWeatherData();
+//   addToLocalStorage();
+//   getLatLon(cityName);
+// }
 
 // Calculate lat & lon of the given city and used api link with '/weather?'
 function getLatLon(cityName) {
@@ -26,10 +27,10 @@ function getLatLon(cityName) {
       return response.json();
     })
     .then(function (data) {
-      // console.log(data);
+      console.log(data);
       // stored lat and lon data in variables
-      lat = data.coord.lat;
-      lon = data.coord.lon;
+      var lat = data.coord.lat;
+      var lon = data.coord.lon;
       // obtained current weather by passing it data from cityUrl
       displayCurrentWeather(data);
       // obtained future weather by passing it lat,lon from cityUrl
@@ -126,52 +127,71 @@ function displayFutureWeather(lat, lon) {
 
 // when the search button is clicked, I want to get the weather condition
 $("#search-button").on("click", function () {
+ 
+  console.log($("#city-input").val())
   var cityInputVal = $("#city-input").val();
+  // var cityName = $("#city-input").val();
+
+  console.log(cityInputVal)
   searchedCities.push(cityInputVal);
-
-  clearWeatherPage()
-  searchWeather();
-
+  console.log(searchedCities)
+  clearWeatherPage();
+  // searchWeather(cityInputVal);
+  renderWeatherData();
+  addToLocalStorage();
+  getLatLon(cityInputVal);
 });
 
 // add a function that add data to local storage
-function addToLocalStorage(){
+function addToLocalStorage() {
+  console.log(searchedCities);
   localStorage.setItem("citiesStringify", JSON.stringify(searchedCities));
-  console.log(searchedCities)
+  console.log(searchedCities);
 }
 
 // a function that reads local storage
 function readLocalStorage() {
-  // parsing JSON data to object
-  searchedCities = JSON.parse(localStorage.getItem("citiesStringify"));
   console.log(searchedCities)
-  // if no data in object searchedCities, let it be an empty object
-  if (!searchedCities) {
-    searchedCities = [];
-  }
+  // parsing JSON data to object
+   // if no data in object searchedCities, let it be an empty object
+  searchedCities = JSON.parse(localStorage.getItem("citiesStringify")) || [];
+  console.log(searchedCities);
 }
 
 // a function that check if there data in localStorage and render it to the page when page reload
 function renderWeatherData() {
-  var searchHistoryEl = $("#searchHistory")
-  searchHistoryEl.empty()
+  console.log(searchedCities)
+  var searchHistoryEl = $("#searchHistory");
+  searchHistoryEl.empty();
 
-  if (searchedCities){
-    for (var i=0; i<searchedCities.length;i++) {
-      var newButton = $("<button>")
-      newButton.text(searchedCities[i])
+  if (searchedCities) {
+    for (var i = 0; i < searchedCities.length; i++) {
+      var newButton = $("<button>");
+      newButton.text(searchedCities[i]);
+      // newButton.on("click", function () {
+      //   console.log(searchedCities[i])
+      //   // getLatLon(searchedCities[i]);
+      // });
       searchHistoryEl.append(newButton);
     }
   }
 }
 
+$("button").on("click", function(event){
+  var temp = event.target.text()
+  console.log(temp)
+  console.log(typeof temp)
+  console.log(event.target.text()); 
+  getLatLon(event.target.text());
+})
+
 // a function that clears displayed weather data
-function clearWeatherPage(){
+function clearWeatherPage() {
   // delete weather divs
   // $("#searchHistory").empty();
   $("#currentWeather").empty();
   $(".col").empty();
 }
-
+console.log("button")
 readLocalStorage();
 renderWeatherData();
